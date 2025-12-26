@@ -174,6 +174,15 @@
             0%, 100% { border-color: rgba(16, 185, 129, 0.3); }
             50% { border-color: rgba(16, 185, 129, 0.6); }
         }
+
+        .download-pulse {
+            animation: download-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes download-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body>
@@ -188,26 +197,38 @@
             const [prog, setProg] = useState(0);
             const [url, setUrl] = useState(null);
             const [fileName, setFileName] = useState('');
+            const [audioBlob, setAudioBlob] = useState(null);
             const audioCtx = useRef(null);
             const audioRef = useRef(null);
 
-            // Función para generar nombre único de archivo
             const generateUniqueFileName = (originalName) => {
-                // Extraer el nombre sin extensión
                 let baseName = originalName.replace(/\.[^/.]+$/, "");
-                
-                // Remover sufijo "_optimizado" si ya existe (evitar duplicados)
-                baseName = baseName.replace(/_optimizado(_\d+)?$/, "");
-                
-                // Sanitizar el nombre (eliminar caracteres problemáticos)
+                baseName = baseName.replace(/_optimizado(_\d+)?(_\d{8}_\d+)?$/g, "");
                 baseName = baseName.replace(/[<>:"/\\|?*]/g, '_');
-                
-                // Generar timestamp único
                 const timestamp = Date.now();
                 const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, '');
-                
-                // Crear nombre único con formato: nombre_optimizado_YYYYMMDD_timestamp.mp3
                 return `${baseName}_optimizado_${dateStr}_${timestamp}.mp3`;
+            };
+
+            const downloadAudio = () => {
+                if (!audioBlob || !fileName) return;
+                
+                try {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(audioBlob);
+                    link.download = fileName;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    setTimeout(() => {
+                        URL.revokeObjectURL(link.href);
+                    }, 100);
+                } catch (error) {
+                    console.error("Error al descargar:", error);
+                    alert("Error al descargar el archivo. Por favor, intenta mantener presionado el reproductor y seleccionar 'Descargar'.");
+                }
             };
 
             const processAudio = async () => {
@@ -216,13 +237,11 @@
                 setProg(10);
                 
                 try {
-                    // Liberar URL anterior si existe
                     if (url) {
                         URL.revokeObjectURL(url);
                         setUrl(null);
                     }
                     
-                    // Detener reproducción si existe
                     if (audioRef.current) {
                         audioRef.current.pause();
                         audioRef.current.src = '';
@@ -277,20 +296,16 @@
                     }
                     chunks.push(new Uint8Array(enc.flush()));
                     
-                    // Crear blob con tipo MIME correcto
                     const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                    
-                    // Generar nombre único para evitar conflictos
-                    const uniqueFileName = generateUniqueFileName(file.name);
-                    
-                    // Crear nuevo Blob con nombre único (para compatibilidad con descargas)
                     const blobUrl = URL.createObjectURL(blob);
                     
+                    const uniqueFileName = generateUniqueFileName(file.name);
+                    
+                    setAudioBlob(blob);
                     setUrl(blobUrl);
                     setFileName(uniqueFileName);
                     setProg(100);
                     
-                    // Pequeño delay antes de marcar como completado
                     await new Promise(r => setTimeout(r, 100));
                     setIsProc(false);
                     
@@ -303,7 +318,6 @@
             };
 
             const handleReset = () => {
-                // Limpiar recursos
                 if (url) {
                     URL.revokeObjectURL(url);
                 }
@@ -312,11 +326,11 @@
                     audioRef.current.src = '';
                 }
                 
-                // Resetear estado
                 setUrl(null); 
                 setFile(null); 
                 setProg(0); 
                 setFileName('');
+                setAudioBlob(null);
             };
 
             return (
@@ -354,7 +368,7 @@
                                 </li>
                                 <li className="flex gap-2">
                                     <span className="font-bold text-purple-400">3.</span>
-                                    <span>Mantén presionado el reproductor → "Descargar"</span>
+                                    <span>Usa el botón verde "DESCARGAR AUDIO" o mantén presionado el reproductor</span>
                                 </li>
                             </ol>
                             <p className="text-[10px] text-purple-300/60 mt-3 italic">
@@ -421,17 +435,27 @@
                                     </p>
                                 </div>
                                 
+                                <button 
+                                    onClick={downloadAudio}
+                                    className="btn-success w-full py-5 rounded-2xl font-black text-lg shadow-xl relative overflow-hidden download-pulse"
+                                >
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                        <span className="text-2xl">📥</span>
+                                        DESCARGAR AUDIO
+                                    </span>
+                                </button>
+                                
                                 <div className="instruction-card rounded-2xl p-5">
                                     <div className="flex items-start gap-3">
-                                        <span className="text-3xl">👆</span>
+                                        <span className="text-3xl">💡</span>
                                         <div>
                                             <p className="text-xs font-black text-green-300 mb-2">
-                                                CÓMO DESCARGAR:
+                                                OPCIONES DE DESCARGA:
                                             </p>
                                             <ol className="text-[11px] text-green-200/90 space-y-1.5 leading-relaxed">
-                                                <li><span className="font-bold">1.</span> Mantén presionado el reproductor de audio</li>
-                                                <li><span className="font-bold">2.</span> Selecciona "Descargar" o "Guardar audio"</li>
-                                                <li><span className="font-bold">3.</span> El archivo se guardará en tu carpeta Descargas</li>
+                                                <li><span className="font-bold">Opción 1:</span> Usa el botón verde "DESCARGAR AUDIO"</li>
+                                                <li><span className="font-bold">Opción 2:</span> Mantén presionado el reproductor → "Descargar"</li>
+                                                <li className="text-[10px] text-green-300/70 mt-2">✨ El archivo se guardará con nombre único en Descargas</li>
                                             </ol>
                                         </div>
                                     </div>
