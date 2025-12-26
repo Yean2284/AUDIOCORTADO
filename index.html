@@ -171,6 +171,7 @@
             const [prog, setProg] = useState(0);
             const [url, setUrl] = useState(null);
             const [fileName, setFileName] = useState('');
+            const [blobData, setBlobData] = useState(null);
             const audioCtx = useRef(null);
 
             const processAudio = async () => {
@@ -224,8 +225,9 @@
                     }
                     chunks.push(new Uint8Array(enc.flush()));
                     
-                    // VOLVER A BLOB URL
-                    const blob = new Blob(chunks, { type: 'audio/mp3' });
+                    const blob = new Blob(chunks, { type: 'audio/mpeg' });
+                    setBlobData(blob);
+                    
                     const blobUrl = URL.createObjectURL(blob);
                     setUrl(blobUrl);
                     
@@ -240,30 +242,20 @@
                 }
             };
 
-            const downloadFile = async () => {
+            const downloadFile = () => {
                 try {
-                    // Obtener el blob del URL
-                    const response = await fetch(url);
-                    const blob = await response.blob();
-                    
-                    // Método 1: Usar la API nativa de Android si existe
-                    if (window.Android && window.Android.downloadFile) {
-                        window.Android.downloadFile(url, fileName);
-                    } 
-                    // Método 2: Crear enlace temporal
-                    else {
+                    // Usar FileReader para convertir blob a base64
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
                         const link = document.createElement('a');
-                        link.href = url;
+                        link.href = reader.result;
                         link.download = fileName || `audio_${Date.now()}.mp3`;
-                        link.style.display = 'none';
                         document.body.appendChild(link);
                         link.click();
-                        
-                        // Pequeño delay antes de remover
-                        setTimeout(() => {
-                            document.body.removeChild(link);
-                        }, 100);
-                    }
+                        document.body.removeChild(link);
+                    };
+                    reader.readAsDataURL(blobData);
+                    
                 } catch (e) {
                     alert("Error al descargar: " + e.message);
                 }
@@ -366,6 +358,7 @@
                                         setFile(null); 
                                         setProg(0); 
                                         setFileName('');
+                                        setBlobData(null);
                                     }} 
                                     className="w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold tracking-widest text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
                                 >
