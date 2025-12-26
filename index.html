@@ -1,276 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Truncar Silencio PRO</title>
-    <meta name="google-adsense-account" content="ca-pub-8057748170377702">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8057748170377702" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Truncar Silencio PRO</title>
 
-    <!-- estilos y dependencias -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.all.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<meta name="google-adsense-account" content="ca-pub-8057748170377702">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8057748170377702" crossorigin="anonymous"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: white;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-        }
-        .card-pro {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-            border: 2px solid rgba(168, 85, 247, 0.4);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
-            transition: all 0.3s ease;
-        }
-        .card-pro:hover { transform: translateY(-5px); box-shadow: 0 35px 60px -15px rgba(139, 92, 246, 0.4); }
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); } 50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); } }
-        .file-drop-zone { transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .file-drop-zone::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; }
-        .file-drop-zone:hover::before { opacity: 1; }
-        .file-drop-zone:hover { border-color: rgba(168, 85, 247, 0.6); transform: scale(1.02); }
-        .btn-primary {
-            background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .btn-primary:hover::before { width: 300px; height: 300px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5); }
-        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); transition: all 0.3s ease; }
-        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); }
-        .progress-bar { background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%); background-size: 200% 100%; animation: gradient-shift 2s ease infinite; }
-        @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .developer-badge {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        .developer-badge:hover { border-color: rgba(168, 85, 247, 0.6); transform: scale(1.05); }
-        .icon-bounce { animation: bounce 1s ease-in-out infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .floating { animation: floating 3s ease-in-out infinite; }
-        @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        audio { width: 100%; height: 45px; border-radius: 12px; }
-        .instruction-card { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); border: 2px solid rgba(16, 185, 129, 0.3); animation: pulse-instruction 2s ease-in-out infinite; }
-        @keyframes pulse-instruction { 0%, 100% { border-color: rgba(16, 185, 129, 0.3); } 50% { border-color: rgba(16, 185, 129, 0.6); } }
-    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.all.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+*{font-family:'Inter',sans-serif}
+body{background:linear-gradient(135deg,#0f172a,#1e1b4b);color:white;-webkit-tap-highlight-color:transparent}
+.card-pro{background:linear-gradient(145deg,rgba(30,41,59,.95),rgba(15,23,42,.95));border:2px solid rgba(168,85,247,.4);backdrop-filter:blur(20px)}
+.btn-primary{background:linear-gradient(135deg,#a855f7,#8b5cf6)}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669)}
+audio{width:100%;height:45px;border-radius:12px}
+</style>
 </head>
+
 <body>
-    <div id="root"></div>
+<div id="root"></div>
 
-    <!-- SCRIPT: React (sin JSX) -->
-    <script>
-        (function () {
-            const e = React.createElement;
-            const { useState, useRef } = React;
+<script>
+(function(){
+const e=React.createElement;
+const{useState,useRef}=React;
 
-            function App() {
-                const [file, setFile] = useState(null);
-                const [isProc, setIsProc] = useState(false);
-                const [prog, setProg] = useState(0);
-                const [url, setUrl] = useState(null);
-                const [fileName, setFileName] = useState('');
-                const audioCtx = useRef(null);
+function App(){
+const[file,setFile]=useState(null);
+const[isProc,setIsProc]=useState(false);
+const[prog,setProg]=useState(0);
+const[url,setUrl]=useState(null);
+const[fileName,setFileName]=useState('');
+const audioCtx=useRef(null);
 
-                async function processAudio() {
-                    if (!file) return;
-                    setIsProc(true);
-                    setProg(10);
+async function processAudio(){
+if(!file)return;
+setIsProc(true);setProg(10);
+try{
+if(!audioCtx.current)audioCtx.current=new(window.AudioContext||window.webkitAudioContext)();
+const buf=await audioCtx.current.decodeAudioData(await file.arrayBuffer());
+const data=buf.getChannelData(0);
+const rate=buf.sampleRate;
+const limit=Math.pow(10,-30/20);
+const minSilence=Math.floor(.6*rate);
 
-                    try {
-                        if (!audioCtx.current) audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
-                        const arrayBuffer = await file.arrayBuffer();
-                        const buf = await audioCtx.current.decodeAudioData(arrayBuffer);
-                        const data = buf.numberOfChannels ? buf.getChannelData(0) : new Float32Array(0);
-                        const rate = buf.sampleRate || 44100;
-                        const limit = Math.pow(10, -30 / 20);
-                        const minSilence = Math.floor(0.6 * rate);
+let out=new Float32Array(data.length),o=0;
+for(let i=0;i<data.length;){
+if(Math.abs(data[i])<limit){
+let s=i;while(i<data.length&&Math.abs(data[i])<limit)i++;
+if(i-s>=minSilence){for(let j=0;j<Math.floor(.1*rate);j++)out[o++]=0}
+else for(let j=s;j<i;j++)out[o++]=data[j];
+}else out[o++]=data[i++];
+}
+setProg(50);
 
-                        let output = new Float32Array(data.length);
-                        let outIdx = 0;
+const enc=new lamejs.Mp3Encoder(1,rate,128),chunks=[];
+for(let i=0;i<o;i+=1152){
+const c=out.subarray(i,Math.min(i+1152,o));
+const i16=new Int16Array(c.length);
+for(let j=0;j<c.length;j++){const v=Math.max(-1,Math.min(1,c[j]));i16[j]=v<0?v*0x8000:v*0x7fff}
+const b=enc.encodeBuffer(i16);if(b.length)chunks.push(new Uint8Array(b));
+}
+const f=enc.flush();if(f.length)chunks.push(new Uint8Array(f));
+const blob=new Blob(chunks,{type:'audio/mpeg'});
+const blobUrl=URL.createObjectURL(blob);
+setUrl(blobUrl);
+setFileName(file.name.replace(/\.[^/.]+$/,"")+"_optimizado.mp3");
+setProg(100);setIsProc(false);
+}catch(err){alert("Error: "+err.message);setIsProc(false);setProg(0);}
+}
 
-                        for (let i = 0; i < data.length; ) {
-                            if (Math.abs(data[i]) < limit) {
-                                let s = i;
-                                while (i < data.length && Math.abs(data[i]) < limit) i++;
-                                if ((i - s) >= minSilence) {
-                                    const m = Math.floor(0.1 * rate);
-                                    for (let j = 0; j < m; j++) output[outIdx++] = 0;
-                                } else {
-                                    for (let j = s; j < i; j++) output[outIdx++] = data[j];
-                                }
-                            } else {
-                                output[outIdx++] = data[i];
-                                i++;
-                            }
-                            if (i % 1000000 === 0) await new Promise(r => setTimeout(r, 0));
-                        }
+return e("div",{className:"min-h-screen flex flex-col items-center justify-center p-6"},
+e("div",{className:"w-full max-w-md card-pro p-8 rounded-3xl"},
+e("h1",{className:"text-center text-3xl font-black mb-4"},"TRUNCAR SILENCIO PRO"),
 
-                        setProg(50);
+e("input",{type:"file",accept:"audio/*",className:"mb-6",onChange:e=>setFile(e.target.files[0])}),
 
-                        // Encodificar MP3 con lamejs (usa la librería global `lamejs`)
-                        const enc = new lamejs.Mp3Encoder(1, rate, 128);
-                        const chunks = [];
-                        for (let i = 0; i < outIdx; i += 1152) {
-                            const chunk = output.subarray(i, Math.min(i + 1152, outIdx));
-                            const i16 = new Int16Array(chunk.length);
-                            for (let j = 0; j < chunk.length; j++) {
-                                const v = Math.max(-1, Math.min(1, chunk[j] || 0));
-                                i16[j] = v < 0 ? v * 0x8000 : v * 0x7fff;
-                            }
-                            const b = enc.encodeBuffer(i16);
-                            if (b && b.length) chunks.push(new Uint8Array(b));
-                            if (i % 400000 === 0) {
-                                setProg(Math.floor(50 + (i / Math.max(1, outIdx)) * 45));
-                                await new Promise(r => setTimeout(r, 0));
-                            }
-                        }
-                        const flush = enc.flush();
-                        if (flush && flush.length) chunks.push(new Uint8Array(flush));
+!url
+?e("button",{onClick:processAudio,disabled:!file||isProc,className:"btn-primary w-full py-4 rounded-xl font-black"},
+isProc?"Procesando…":"PROCESAR AUDIO")
 
-                        const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                        const blobUrl = URL.createObjectURL(blob);
-                        setUrl(blobUrl);
+:e("div",{className:"space-y-4"},
+e("audio",{controls:true,src:url}),
+e("a",{href:url,download:fileName,className:"btn-success block w-full text-center py-4 rounded-xl font-black text-lg"},
+"⬇️ DESCARGAR AUDIO"),
+e("button",{onClick:()=>{URL.revokeObjectURL(url);setUrl(null);setFile(null)},className:"w-full text-xs text-purple-300 mt-4"},
+"Procesar otro audio")
+)
+)
+);
+}
 
-                        const baseName = (file && file.name) ? file.name.replace(/\.[^/.]+$/, "") : 'audio';
-                        setFileName(`${baseName}_optimizado.mp3`);
-                        setProg(100);
-                        setIsProc(false);
-                    } catch (e) {
-                        alert("Error: " + (e && e.message ? e.message : String(e)));
-                        setIsProc(false);
-                        setProg(0);
-                    }
-                }
-
-                // Estructura principal (se construye con createElement)
-                return e("div", { className: "min-h-screen flex flex-col items-center justify-center p-6 relative" },
-                    e("div", { className: "absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl" }),
-                    e("div", { className: "absolute bottom-20 right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl" }),
-                    e("div", { className: "w-full max-w-md card-pro p-10 rounded-[3rem] shadow-2xl floating" },
-                        e("div", { className: "flex justify-center mb-6" },
-                            e("div", { className: "w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-4xl shadow-lg pulse-glow" }, "🎵")
-                        ),
-                        e("h1", { className: "text-center text-3xl font-black mb-3 gradient-text tracking-tight" }, "TRUNCAR SILENCIO PRO"),
-                        e("p", { className: "text-center text-xs text-purple-300/70 mb-2 font-semibold tracking-wide" }, "Optimiza tus audios eliminando silencios prolongados"),
-                        e("div", { className: "bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5 mb-8" },
-                            e("h2", { className: "text-xs font-black text-purple-300 mb-3 flex items-center gap-2" },
-                                e("span", null, "ℹ️"), " CÓMO USAR"
-                            ),
-                            e("ol", { className: "text-xs text-purple-200/80 space-y-2 leading-relaxed" },
-                                e("li", { className: "flex gap-2" }, e("span", { className: "font-bold text-purple-400" }, "1."), e("span", null, "Selecciona tu archivo de audio (MP3, WAV, etc.)")),
-                                e("li", { className: "flex gap-2" }, e("span", { className: "font-bold text-purple-400" }, "2."), e("span", null, 'Presiona "PROCESAR AUDIO" y espera')),
-                                e("li", { className: "flex gap-2" }, e("span", { className: "font-bold text-purple-400" }, "3."), e("span", null, 'Mantén presionado el reproductor → "Descargar"'))
-                            ),
-                            e("p", { className: "text-[10px] text-purple-300/60 mt-3 italic" }, "⚡ Los silencios mayores a 0.6 segundos se reducen automáticamente")
-                        ),
-                        e("div", { className: "file-drop-zone border-2 border-dashed border-purple-500/30 rounded-3xl p-10 text-center mb-8 bg-slate-900/30" },
-                            e("input", {
-                                type: "file",
-                                id: "aud",
-                                accept: "audio/*",
-                                className: "hidden",
-                                onChange: function (ev) { if (ev && ev.target && ev.target.files && ev.target.files[0]) setFile(ev.target.files[0]); }
-                            }),
-                            e("label", { htmlFor: "aud", className: "cursor-pointer block" },
-                                e("span", { className: "text-5xl block mb-4 " + (!file ? "icon-bounce" : "") }, file ? "✅" : "📁"),
-                                e("span", { className: "text-sm text-purple-200 font-bold tracking-wide block mb-2" }, file ? "Archivo seleccionado:" : "Toca para seleccionar audio"),
-                                file ? e("span", { className: "text-xs text-purple-300/80 font-medium block mt-2 px-4 py-2 bg-purple-500/10 rounded-full inline-block" }, file.name) : null
-                            )
-                        ),
-
-                        isProc ? e("div", { className: "mb-8" },
-                            e("div", { className: "flex justify-between text-xs text-purple-300 mb-2 font-semibold" },
-                                e("span", null, "Procesando..."), e("span", null, prog + "%")
-                            ),
-                            e("div", { className: "w-full bg-slate-900/50 rounded-full h-3 overflow-hidden shadow-inner" },
-                                e("div", { className: "progress-bar h-full rounded-full", style: { width: prog + "%", transition: 'width 0.3s' } })
-                            )
-                        ) : null,
-
-                        !url ? e("button", {
-                            onClick: processAudio,
-                            disabled: !file || isProc,
-                            className: "btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed py-5 rounded-2xl font-black text-lg shadow-xl relative z-10"
-                        }, isProc ? "⚡ CONVIRTIENDO..." : "🚀 PROCESAR AUDIO")
-                        : e("div", { className: "space-y-4" },
-                            e("div", { className: "bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5" },
-                                e("p", { className: "text-xs text-purple-300 mb-3 text-center font-bold flex items-center justify-center gap-2" },
-                                    e("span", null, "✅"), " Audio procesado exitosamente"
-                                ),
-                                e("audio", { controls: true, className: "w-full mb-3", src: url }, "Tu navegador no soporta audio HTML5."),
-                                e("p", { className: "text-[10px] text-purple-300/60 text-center" }, e("span", null, "📄 "), e("span", { className: "font-bold" }, fileName))
-                            ),
-                            e("div", { className: "instruction-card rounded-2xl p-5" },
-                                e("div", { className: "flex items-start gap-3" },
-                                    e("span", { className: "text-3xl" }, "👆"),
-                                    e("div", null,
-                                        e("p", { className: "text-xs font-black text-green-300 mb-2" }, "CÓMO DESCARGAR:"),
-                                        e("ol", { className: "text-[11px] text-green-200/90 space-y-1.5 leading-relaxed" },
-                                            e("li", null, e("span", { className: "font-bold" }, "1."), " Mantén presionado el reproductor de audio"),
-                                            e("li", null, e("span", { className: "font-bold" }, "2."), ' Selecciona "Descargar" o "Guardar audio"'),
-                                            e("li", null, e("span", { className: "font-bold" }, "3."), " El archivo se guardará en tu carpeta Descargas")
-                                        )
-                                    )
-                                )
-                            ),
-                            e("button", {
-                                onClick: function () {
-                                    try { if (url) URL.revokeObjectURL(url); } catch (e) {}
-                                    setUrl(null);
-                                    setFile(null);
-                                    setProg(0);
-                                    setFileName('');
-                                },
-                                className: "w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold tracking-widest text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
-                            }, "🔄 Procesar otro audio")
-                        )
-                    ),
-                    e("div", { className: "mt-10 developer-badge px-8 py-4 rounded-2xl shadow-lg" },
-                        e("div", { className: "flex items-center gap-3" },
-                            e("div", { className: "w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-lg" }, "👨‍💻"),
-                            e("div", null,
-                                e("p", { className: "text-[9px] text-purple-400/60 uppercase font-bold tracking-widest mb-0.5" }, "Desarrollado por"),
-                                e("p", { className: "text-sm font-black gradient-text tracking-wide" }, "YEAN CARLOS GODOY GONZÁLEZ")
-                            )
-                        )
-                    ),
-                    e("div", { className: "mt-8 opacity-40 text-center" },
-                        e("p", { className: "text-[10px] uppercase font-bold tracking-widest text-purple-300/50" }, "© 2025 Truncar Silencio PRO • Todos los derechos reservados")
-                    )
-                );
-            }
-
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(e(App));
-        })();
-    </script>
+ReactDOM.createRoot(document.getElementById("root")).render(e(App));
+})();
+</script>
 </body>
 </html>
