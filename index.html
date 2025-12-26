@@ -11,152 +11,163 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background: #0f172a; color: white; font-family: 'Inter', sans-serif; touch-action: manipulation; }
-        .card-pro { background: #1e293b; border: 1px solid #334155; border-radius: 2rem; }
-        .gradient-btn { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); }
-        .progress-fill { transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: linear-gradient(90deg, #a855f7, #ec4899); }
+        body { background: #020617; color: white; font-family: 'Inter', sans-serif; }
+       .glass { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(139, 92, 246, 0.3); backdrop-filter: blur(10px); }
+       .btn-grad { background: linear-gradient(135deg, #9333ea 0%, #db2777 100%); }
+       .progress-bar { background: linear-gradient(90deg, #9333ea, #db2777); transition: width 0.3s ease; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div id="root" class="w-full max-w-md"></div>
 
     <script type="text/babel">
-        const { useState, useRef } = React;
+        const { useState } = React;
 
         function App() {
             const [file, setFile] = useState(null);
             const [isProc, setIsProc] = useState(false);
             const [prog, setProg] = useState(0);
-            const [downloadUrl, setDownloadUrl] = useState(null);
-            const [status, setStatus] = useState("");
+            const = useState(null);
+            const = useState("");
 
             const processAudio = async () => {
                 if (!file) return;
                 setIsProc(true);
                 setProg(5);
-                setStatus("Leyendo archivo...");
+                setStatus("Cargando...");
 
                 try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const arrayBuffer = await file.arrayBuffer();
-                    setStatus("Decodificando...");
-                    const audioBuffer = await audioCtx.current ? null : await audioCtx.decodeAudioData(arrayBuffer);
-                    
-                    const data = audioBuffer.getChannelData(0);
-                    const sampleRate = audioBuffer.sampleRate;
-                    const threshold = 0.02; // Umbral de silencio
-                    const minSilenceLen = Math.floor(sampleRate * 0.6); // 0.6 segs
-                    
-                    setStatus("Eliminando silencios...");
-                    let chunks = [];
-                    let lastIdx = 0;
+                    const audioCtx = new (window.AudioContext |
 
-                    for (let i = 0; i < data.length; i++) {
-                        if (Math.abs(data[i]) < threshold) {
-                            let start = i;
-                            while (i < data.length && Math.abs(data[i]) < threshold) i++;
-                            if ((i - start) > minSilenceLen) {
-                                chunks.push(data.subarray(lastIdx, start + Math.floor(sampleRate * 0.1)));
-                                lastIdx = i;
+| window.webkitAudioContext)();
+                    const arrayBuffer = await file.arrayBuffer();
+                    const buf = await audioCtx.decodeAudioData(arrayBuffer);
+                    const data = buf.getChannelData(0);
+                    const rate = buf.sampleRate;
+
+                    // Algoritmo de Truncado
+                    const limit = 0.02;
+                    const minSilence = Math.floor(0.6 * rate);
+                    let output = new Float32Array(data.length);
+                    let outIdx = 0;
+
+                    for (let i = 0; i < data.length; ) {
+                        if (Math.abs(data[i]) < limit) {
+                            let s = i;
+                            while (i < data.length && Math.abs(data[i]) < limit) i++;
+                            if ((i - s) >= minSilence) {
+                                const m = Math.floor(0.1 * rate);
+                                for (let j = 0; j < m; j++) output[outIdx++] = 0;
+                            } else {
+                                for (let j = s; j < i; j++) output[outIdx++] = data[j];
                             }
+                        } else {
+                            output[outIdx++] = data[i]; i++;
                         }
-                        if (i % 500000 === 0) setProg(Math.floor((i / data.length) * 40) + 10);
+                        if (i % 1000000 === 0) {
+                            setProg(Math.floor((i / data.length) * 40));
+                            await new Promise(r => setTimeout(r, 0));
+                        }
                     }
-                    chunks.push(data.subarray(lastIdx));
 
                     setStatus("Codificando MP3...");
-                    const encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-                    const mp3Data = [];
-                    
-                    for (let segment of chunks) {
-                        for (let i = 0; i < segment.length; i += 1152) {
-                            const chunk = segment.subarray(i, i + 1152);
-                            const i16 = new Int16Array(chunk.length);
-                            for (let j = 0; j < chunk.length; j++) {
-                                i16[j] = chunk[j] < 0 ? chunk[j] * 0x8000 : chunk[j] * 0x7FFF;
-                            }
-                            const mp3buf = encoder.encodeBuffer(i16);
-                            if (mp3buf.length > 0) mp3Data.push(new Uint8Array(mp3buf));
+                    const encoder = new lamejs.Mp3Encoder(1, rate, 128);
+                    const mp3Chunks =;
+                    for (let i = 0; i < outIdx; i += 1152) {
+                        const chunk = output.subarray(i, i + 1152);
+                        const i16 = new Int16Array(chunk.length);
+                        for (let j = 0; j < chunk.length; j++) {
+                            i16[j] = chunk[j] < 0? chunk[j] * 0x8000 : chunk[j] * 0x7FFF;
                         }
-                        setProg(prev => Math.min(95, prev + 2));
+                        const b = encoder.encodeBuffer(i16);
+                        if (b.length > 0) mp3Chunks.push(new Uint8Array(b));
+                        if (i % 400000 === 0) setProg(40 + Math.floor((i/outIdx)*50));
                     }
-                    mp3Data.push(new Uint8Array(encoder.flush()));
-
-                    const blob = new Blob(mp3Data, { type: 'audio/mp3' });
-                    setDownloadUrl(URL.createObjectURL(blob));
-                    setStatus("¡Listo!");
+                    mp3Chunks.push(new Uint8Array(encoder.flush()));
+                    
+                    setAudioBlob(new Blob(mp3Chunks, { type: 'audio/mp3' }));
                     setProg(100);
-                } catch (err) {
-                    alert("Error de memoria. Intenta con un audio más corto.");
-                    console.error(err);
+                    setStatus("¡Completado!");
+                } catch (e) {
+                    alert("Error: Archivo demasiado pesado para el móvil.");
                 }
                 setIsProc(false);
             };
 
-            const handleDownload = () => {
-                const a = document.createElement("a");
-                a.href = downloadUrl;
-                a.download = "audio_optimizado.mp3";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+            const downloadBase64 = () => {
+                if (!audioBlob) return;
+                setStatus("Preparando descarga...");
+                
+                // EL TRUCO PARA APK: Usar Base64 en lugar de Blob URL
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    const link = document.createElement('a');
+                    link.href = base64data;
+                    link.download = "audio_optimizado.mp3";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setStatus("¡Descargado!");
+                };
+                reader.readAsDataURL(audioBlob);
             };
 
             return (
-                <div className="min-h-screen p-6 flex flex-col items-center justify-center">
-                    <div className="w-full max-w-md card-pro p-8 shadow-2xl">
-                        <h1 className="text-2xl font-black text-center mb-2 text-purple-400">TRUNCAR SILENCIO PRO</h1>
-                        <p className="text-center text-xs text-slate-400 mb-8 uppercase tracking-widest font-bold">Edición para APK 2025</p>
+                <div class="glass p-8 rounded-[2.5rem] shadow-2xl text-center">
+                    <h1 class="text-2xl font-black mb-1 text-purple-400 uppercase tracking-tighter">Truncar Silencio PRO</h1>
+                    <p class="text-[10px] font-bold text-slate-500 mb-8 tracking-widest uppercase">Versión Estable APK 2025</p>
 
-                        {!downloadUrl ? (
-                            <div className="space-y-6">
-                                <div className="border-2 border-dashed border-slate-700 rounded-2xl p-8 text-center bg-slate-800/50">
-                                    <input type="file" id="f" accept="audio/*" className="hidden" onChange={e => setFile(e.target.files[0])} />
-                                    <label htmlFor="f" className="cursor-pointer block">
-                                        <div className="text-4xl mb-3">{file ? "✅" : "🎵"}</div>
-                                        <div className="text-sm font-bold truncate">{file ? file.name : "Toca para subir audio"}</div>
-                                    </label>
-                                </div>
+                    {!audioBlob? (
+                        <div class="space-y-6">
+                            <div class="border-2 border-dashed border-slate-700 rounded-3xl p-10 bg-slate-900/50">
+                                <input type="file" id="aud" accept="audio/*" class="hidden" onChange={e => setFile(e.target.files)} />
+                                <label htmlFor="aud" class="cursor-pointer block">
+                                    <div class="text-5xl mb-4">{file? "✅" : "📁"}</div>
+                                    <div class="text-sm font-bold truncate">{file? file.name : "Toca para elegir audio"}</div>
+                                </label>
+                            </div>
 
-                                {isProc && (
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-[10px] font-bold uppercase">
-                                            <span>{status}</span>
-                                            <span>{prog}%</span>
-                                        </div>
-                                        <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
-                                            <div className="h-full progress-fill" style={{width: `${prog}%`}}></div>
-                                        </div>
+                            {isProc && (
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-[10px] font-bold uppercase text-purple-300">
+                                        <span>{status}</span>
+                                        <span>{prog}%</span>
                                     </div>
-                                )}
-
-                                <button 
-                                    onClick={processAudio}
-                                    disabled={!file || isProc}
-                                    className="w-full py-4 rounded-xl font-bold gradient-btn shadow-lg disabled:opacity-50 active:scale-95 transition-transform"
-                                >
-                                    {isProc ? "PROCESANDO..." : "🚀 PROCESAR AHORA"}
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="space-y-4 text-center">
-                                <div className="p-6 bg-green-500/10 border border-green-500/20 rounded-2xl">
-                                    <p className="text-green-400 font-bold mb-1">¡Procesamiento Exitoso!</p>
-                                    <p className="text-[10px] text-slate-400">El audio está listo para descargar</p>
+                                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                        <div class="h-full progress-bar" style={{width: `${prog}%`}}></div>
+                                    </div>
                                 </div>
-                                <button onClick={handleDownload} className="w-full py-4 rounded-xl font-bold bg-green-600 shadow-lg active:scale-95 transition-transform">
-                                    ⬇️ DESCARGAR MP3
-                                </button>
-                                <button onClick={() => {setDownloadUrl(null); setFile(null); setProg(0);}} className="text-xs text-slate-500 font-bold uppercase tracking-tighter">
-                                    Procesar otro archivo
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                            )}
 
-                    <div className="mt-8 text-center opacity-50">
-                        <p className="text-[10px] font-bold uppercase tracking-widest">Desarrollado por</p>
-                        <p className="text-sm font-black text-purple-400">YEAN CARLOS GODOY</p>
+                            <button 
+                                onClick={processAudio} 
+                                disabled={!file |
+
+| isProc} 
+                                class="w-full py-4 rounded-2xl font-black text-lg btn-grad shadow-lg active:scale-95 transition-transform disabled:opacity-40"
+                            >
+                                {isProc? "PROCESANDO..." : "⚡ PROCESAR AUDIO"}
+                            </button>
+                        </div>
+                    ) : (
+                        <div class="space-y-4">
+                            <div class="p-6 bg-green-500/10 border border-green-500/20 rounded-2xl">
+                                <p class="text-green-400 font-bold">¡Listo para descargar!</p>
+                                <p class="text-[10px] text-slate-500 uppercase mt-1">{status}</p>
+                            </div>
+                            <button onClick={downloadBase64} class="w-full py-5 rounded-2xl font-black text-xl bg-green-600 shadow-xl active:scale-95 transition-transform">
+                                ⬇️ DESCARGAR MP3
+                            </button>
+                            <button onClick={() => {setAudioBlob(null); setFile(null); setProg(0);}} class="text-xs font-bold text-slate-500 uppercase tracking-tight">
+                                Procesar otro audio
+                            </button>
+                        </div>
+                    )}
+                    
+                    <div class="mt-8 pt-6 border-t border-slate-800/50">
+                        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-[0.2em]">Desarrollado por</p>
+                        <p class="text-xs font-black text-slate-400">YEAN CARLOS GODOY</p>
                     </div>
                 </div>
             );
