@@ -160,12 +160,19 @@
         
         audio {
             width: 100%;
-            height: 40px;
+            height: 45px;
             border-radius: 12px;
         }
         
-        audio::-webkit-media-controls-panel {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(139, 92, 246, 0.2));
+        .instruction-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            animation: pulse-instruction 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-instruction {
+            0%, 100% { border-color: rgba(16, 185, 129, 0.3); }
+            50% { border-color: rgba(16, 185, 129, 0.6); }
         }
     </style>
 </head>
@@ -181,7 +188,6 @@
             const [prog, setProg] = useState(0);
             const [url, setUrl] = useState(null);
             const [fileName, setFileName] = useState('');
-            const [blobData, setBlobData] = useState(null);
             const audioCtx = useRef(null);
 
             const processAudio = async () => {
@@ -236,8 +242,6 @@
                     chunks.push(new Uint8Array(enc.flush()));
                     
                     const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                    setBlobData(blob);
-                    
                     const blobUrl = URL.createObjectURL(blob);
                     setUrl(blobUrl);
                     
@@ -249,41 +253,6 @@
                 } catch (e) { 
                     alert("Error: " + e.message); 
                     setIsProc(false);
-                }
-            };
-
-            const downloadFile = async () => {
-                try {
-                    // Intentar usar Web Share API
-                    if (navigator.share && navigator.canShare) {
-                        const file = new File([blobData], fileName, { type: 'audio/mpeg' });
-                        
-                        if (navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Audio Optimizado',
-                                text: 'Audio procesado sin silencios'
-                            });
-                            return;
-                        }
-                    }
-                    
-                    // Fallback: descarga tradicional
-                    const reader = new FileReader();
-                    reader.onloadend = function() {
-                        const link = document.createElement('a');
-                        link.href = reader.result;
-                        link.download = fileName || `audio_${Date.now()}.mp3`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    };
-                    reader.readAsDataURL(blobData);
-                    
-                } catch (e) {
-                    if (e.name !== 'AbortError') {
-                        alert("Error: " + e.message);
-                    }
                 }
             };
 
@@ -322,7 +291,7 @@
                                 </li>
                                 <li className="flex gap-2">
                                     <span className="font-bold text-purple-400">3.</span>
-                                    <span>Escucha y descarga tu audio optimizado</span>
+                                    <span>Mantén presionado el reproductor → "Descargar"</span>
                                 </li>
                             </ol>
                             <p className="text-[10px] text-purple-300/60 mt-3 italic">
@@ -372,27 +341,33 @@
                         ) : (
                             <div className="space-y-4">
                                 <div className="bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5">
-                                    <p className="text-xs text-purple-300 mb-3 text-center font-bold">
-                                        ✅ Audio procesado exitosamente
+                                    <p className="text-xs text-purple-300 mb-3 text-center font-bold flex items-center justify-center gap-2">
+                                        <span>✅</span> Audio procesado exitosamente
                                     </p>
-                                    <audio controls className="w-full mb-3" src={url} controlsList="nodownload">
+                                    <audio controls className="w-full mb-3" src={url}>
                                         Tu navegador no soporta audio HTML5.
                                     </audio>
-                                    <p className="text-[10px] text-purple-300/60 text-center mb-3">
-                                        Archivo: <span className="font-bold">{fileName}</span>
+                                    <p className="text-[10px] text-purple-300/60 text-center">
+                                        📄 <span className="font-bold">{fileName}</span>
                                     </p>
                                 </div>
                                 
-                                <button 
-                                    onClick={downloadFile}
-                                    className="btn-success w-full py-5 rounded-2xl font-black text-lg shadow-xl"
-                                >
-                                    ⬇️ GUARDAR AUDIO
-                                </button>
-                                
-                                <p className="text-[9px] text-purple-300/50 text-center italic leading-relaxed px-2">
-                                    💡 Si tienes problemas para descargar, mantén presionado el reproductor y selecciona "Descargar audio"
-                                </p>
+                                {/* Instrucciones destacadas */}
+                                <div className="instruction-card rounded-2xl p-5">
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-3xl">👆</span>
+                                        <div>
+                                            <p className="text-xs font-black text-green-300 mb-2">
+                                                CÓMO DESCARGAR:
+                                            </p>
+                                            <ol className="text-[11px] text-green-200/90 space-y-1.5 leading-relaxed">
+                                                <li><span className="font-bold">1.</span> Mantén presionado el reproductor de audio</li>
+                                                <li><span className="font-bold">2.</span> Selecciona "Descargar" o "Guardar audio"</li>
+                                                <li><span className="font-bold">3.</span> El archivo se guardará en tu carpeta Descargas</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 <button 
                                     onClick={() => { 
@@ -401,7 +376,6 @@
                                         setFile(null); 
                                         setProg(0); 
                                         setFileName('');
-                                        setBlobData(null);
                                     }} 
                                     className="w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold tracking-widest text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
                                 >
