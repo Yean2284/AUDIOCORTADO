@@ -3,260 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Truncar Silencio PRO</title>
-    <meta name="google-adsense-account" content="ca-pub-8057748170377702">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8057748170377702" crossorigin="anonymous"></script>
+    <title>Truncar Silencio PRO v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.all.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; }
-        
-        body { 
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: white;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-        }
-        
-        .card-pro { 
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-            border: 2px solid rgba(168, 85, 247, 0.4);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
-            transition: all 0.3s ease;
-        }
-        
-        .card-pro:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 35px 60px -15px rgba(139, 92, 246, 0.4);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
-        }
-        
-        .file-drop-zone {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .file-drop-zone::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .file-drop-zone:hover::before {
-            opacity: 1;
-        }
-        
-        .file-drop-zone:hover {
-            border-color: rgba(168, 85, 247, 0.6);
-            transform: scale(1.02);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .btn-primary:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
-        }
-        
-        .progress-bar {
-            background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%);
-            background-size: 200% 100%;
-            animation: gradient-shift 2s ease infinite;
-        }
-        
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .developer-badge {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        
-        .developer-badge:hover {
-            border-color: rgba(168, 85, 247, 0.6);
-            transform: scale(1.05);
-        }
-        
-        .icon-bounce {
-            animation: bounce 1s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        audio {
-            width: 100%;
-            height: 45px;
-            border-radius: 12px;
-        }
-        
-        .instruction-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
-            border: 2px solid rgba(16, 185, 129, 0.3);
-            animation: pulse-instruction 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-instruction {
-            0%, 100% { border-color: rgba(16, 185, 129, 0.3); }
-            50% { border-color: rgba(16, 185, 129, 0.6); }
-        }
-
-        .download-pulse {
-            animation: download-pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes download-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #020617; color: white; overflow-x: hidden; }
+       .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(139, 92, 246, 0.3); }
+       .gradient-bg { background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent), radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.15), transparent); }
+       .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+       .progress-glow { box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
     </style>
 </head>
-<body>
+<body class="gradient-bg min-h-screen">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useRef } = React;
+        const { useState, useRef, useEffect } = React;
 
         function App() {
             const [file, setFile] = useState(null);
             const [isProc, setIsProc] = useState(false);
             const [prog, setProg] = useState(0);
-            const [url, setUrl] = useState(null);
-            const [fileName, setFileName] = useState('');
-            const [audioBlob, setAudioBlob] = useState(null);
-            const [base64Url, setBase64Url] = useState(null);
+            const = useState(null); // Guardamos los chunks en vez de URL directa
+            const = useState(false);
+            const [fileName, setFileName] = useState("audio_optimizado");
             const audioCtx = useRef(null);
-            const audioRef = useRef(null);
-
-            const blobToBase64 = (blob) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = error => reject(error);
-                });
-            };
-
-            const generateUniqueFileName = (originalName) => {
-                let baseName = originalName.replace(/\.[^/.]+$/, "");
-                baseName = baseName.replace(/_optimizado(_\d+)?(_\d{8}_\d+)?$/g, "");
-                baseName = baseName.replace(/[<>:"/\\|?*]/g, '_');
-                const timestamp = Date.now();
-                const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, '');
-                let finalName = `\( {baseName}_optimizado_ \){dateStr}_${timestamp}.mp3`;
-                if (!finalName.endsWith('.mp3')) finalName += '.mp3';
-                return finalName;
-            };
 
             const processAudio = async () => {
                 if (!file) return;
                 setIsProc(true);
-                setProg(10);
-                
+                setProg(5);
                 try {
-                    if (url) {
-                        URL.revokeObjectURL(url);
-                        setUrl(null);
-                    }
+                    if (!audioCtx.current) audioCtx.current = new (window.AudioContext |
+
+| window.webkitAudioContext)();
                     
-                    if (audioRef.current) {
-                        audioRef.current.pause();
-                        audioRef.current.src = '';
-                    }
-                    
-                    if (!audioCtx.current) {
-                        audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
-                    }
-                    
-                    const buf = await audioCtx.current.decodeAudioData(await file.arrayBuffer());
+                    // Decodificación con gestión de memoria
+                    const arrayBuffer = await file.arrayBuffer();
+                    const buf = await audioCtx.current.decodeAudioData(arrayBuffer);
                     const data = buf.getChannelData(0);
                     const rate = buf.sampleRate;
-                    const limit = Math.pow(10, -30 / 20);
+                    const limit = Math.pow(10, -30 / 20); // -30dB
                     const minSilence = Math.floor(0.6 * rate);
                     
                     let output = new Float32Array(data.length);
                     let outIdx = 0;
                     
+                    // Algoritmo de truncado
                     for (let i = 0; i < data.length; ) {
                         if (Math.abs(data[i]) < limit) {
                             let s = i;
                             while (i < data.length && Math.abs(data[i]) < limit) i++;
                             if ((i - s) >= minSilence) {
-                                const m = Math.floor(0.1 * rate);
+                                const m = Math.floor(0.1 * rate); // Deja 0.1s de aire
                                 for (let j = 0; j < m; j++) output[outIdx++] = 0;
                             } else {
                                 for (let j = s; j < i; j++) output[outIdx++] = data[j];
@@ -264,231 +69,165 @@
                         } else {
                             output[outIdx++] = data[i]; i++;
                         }
-                        if (i % 1000000 === 0) await new Promise(r => setTimeout(r, 0));
+                        if (i % 1000000 === 0) {
+                            setProg(Math.floor(10 + (i / data.length) * 30));
+                            await new Promise(r => setTimeout(r, 0));
+                        }
                     }
                     
-                    setProg(50);
-                    
+                    // Codificación MP3 por chunks para evitar bloqueos
                     const enc = new lamejs.Mp3Encoder(1, rate, 128);
-                    const chunks = [];
+                    const chunks =;
                     for (let i = 0; i < outIdx; i += 1152) {
                         const chunk = output.subarray(i, i + 1152);
                         const i16 = new Int16Array(chunk.length);
                         for (let j = 0; j < chunk.length; j++) {
                             const v = Math.max(-1, Math.min(1, chunk[j]));
-                            i16[j] = v < 0 ? v * 0x8000 : v * 0x7FFF;
+                            i16[j] = v < 0? v * 0x8000 : v * 0x7FFF;
                         }
                         const b = enc.encodeBuffer(i16);
                         if (b.length > 0) chunks.push(new Uint8Array(b));
                         if (i % 400000 === 0) {
-                            setProg(Math.floor(50 + (i / outIdx) * 45));
+                            setProg(Math.floor(40 + (i / outIdx) * 55));
                             await new Promise(r => setTimeout(r, 0)); 
                         }
                     }
                     chunks.push(new Uint8Array(enc.flush()));
-                    
-                    const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                    const blobUrl = URL.createObjectURL(blob);
-                    const base64 = await blobToBase64(blob);
-                    const dataUrl = `data:audio/mpeg;base64,${base64}`;
-                    
-                    const uniqueFileName = generateUniqueFileName(file.name);
-                    
-                    setAudioBlob(blob);
-                    setUrl(blobUrl);
-                    setBase64Url(dataUrl);
-                    setFileName(uniqueFileName);
+                    setAudioData(chunks); // Guardamos los datos procesados
                     setProg(100);
-                    
-                    await new Promise(r => setTimeout(r, 100));
-                    setIsProc(false);
-                    
+                    setTimeout(() => setShowSaveModal(true), 500); // Lanzar modal de guardado
                 } catch (e) { 
-                    console.error("Error procesando audio:", e);
-                    alert("Error al procesar el audio: " + e.message); 
-                    setIsProc(false);
-                    setProg(0);
+                    alert("Error de memoria. Intenta con un archivo más corto."); 
                 }
+                setIsProc(false);
             };
 
-            const handleReset = () => {
-                if (url) {
-                    URL.revokeObjectURL(url);
-                }
-                if (audioRef.current) {
-                    audioRef.current.pause();
-                    audioRef.current.src = '';
-                }
-                
-                setUrl(null); 
-                setFile(null); 
-                setProg(0); 
-                setFileName('');
-                setAudioBlob(null);
-                setBase64Url(null);
+            const triggerDownload = () => {
+                if (!audioData) return;
+                const blob = new Blob(audioData, { type: 'audio/mp3' });
+                const finalName = fileName.endsWith('.mp3')? fileName : `${fileName}.mp3`;
+
+                // MÉTODO COMPATIBLE CON APK/WEBVIEW
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64data = e.target.result;
+                    const link = document.createElement('a');
+                    link.href = base64data;
+                    link.download = finalName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setShowSaveModal(false);
+                };
+                reader.readAsDataURL(blob); // Esto convierte el blob en una data-URL segura para WebView
             };
 
             return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
-                    <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-20 right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl"></div>
-                    
-                    <div className="w-full max-w-md card-pro p-10 rounded-[3rem] shadow-2xl floating">
-                        <div className="flex justify-center mb-6">
-                            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-4xl shadow-lg pulse-glow">
-                                🎵
+                <div className="flex flex-col items-center justify-center min-h-screen p-6">
+                    <div className="w-full max-w-lg glass-card p-8 rounded-[2.5rem] shadow-2xl relative z-10 animate-float">
+                        <header className="text-center mb-8">
+                            <div className="inline-block p-4 bg-violet-600 rounded-3xl mb-4 shadow-lg shadow-violet-500/20">
+                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                             </div>
-                        </div>
-                        
-                        <h1 className="text-center text-3xl font-black mb-3 gradient-text tracking-tight">
-                            TRUNCAR SILENCIO PRO
-                        </h1>
-                        
-                        <p className="text-center text-xs text-purple-300/70 mb-2 font-semibold tracking-wide">
-                            Optimiza tus audios eliminando silencios prolongados
-                        </p>
-                        
-                        <div className="bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5 mb-8">
-                            <h2 className="text-xs font-black text-purple-300 mb-3 flex items-center gap-2">
-                                <span>ℹ️</span> CÓMO USAR
-                            </h2>
-                            <ol className="text-xs text-purple-200/80 space-y-2 leading-relaxed">
-                                <li className="flex gap-2">
-                                    <span className="font-bold text-purple-400">1.</span>
-                                    <span>Selecciona tu archivo de audio (MP3, WAV, etc.)</span>
-                                </li>
-                                <li className="flex gap-2">
-                                    <span className="font-bold text-purple-400">2.</span>
-                                    <span>Presiona "PROCESAR AUDIO" y espera</span>
-                                </li>
-                                <li className="flex gap-2">
-                                    <span className="font-bold text-purple-400">3.</span>
-                                    <span>Usa el botón verde "DESCARGAR AUDIO" o mantén presionado el reproductor</span>
-                                </li>
-                            </ol>
-                            <p className="text-[10px] text-purple-300/60 mt-3 italic">
-                                ⚡ Los silencios mayores a 0.6 segundos se reducen automáticamente
-                            </p>
-                        </div>
-                        
-                        <div className="file-drop-zone border-2 border-dashed border-purple-500/30 rounded-3xl p-10 text-center mb-8 bg-slate-900/30">
-                            <input type="file" onChange={e => setFile(e.target.files[0])} className="hidden" id="aud" accept="audio/*" />
-                            <label htmlFor="aud" className="cursor-pointer block">
-                                <span className={`text-5xl block mb-4 ${!file && 'icon-bounce'}`}>
-                                    {file ? "✅" : "📁"}
-                                </span>
-                                <span className="text-sm text-purple-200 font-bold tracking-wide block mb-2">
-                                    {file ? "Archivo seleccionado:" : "Toca para seleccionar audio"}
-                                </span>
-                                {file && (
-                                    <span className="text-xs text-purple-300/80 font-medium block mt-2 px-4 py-2 bg-purple-500/10 rounded-full inline-block">
-                                        {file.name}
-                                    </span>
-                                )}
-                            </label>
-                        </div>
+                            <h1 className="text-3xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-400 uppercase">
+                                Truncar Silencio PRO
+                            </h1>
+                        </header>
 
-                        {isProc && (
-                            <div className="mb-8">
-                                <div className="flex justify-between text-xs text-purple-300 mb-2 font-semibold">
-                                    <span>Procesando...</span>
-                                    <span>{prog}%</span>
+                        {!audioData? (
+                            <div className="space-y-6">
+                                <div className="border-2 border-dashed border-violet-500/30 rounded-3xl p-12 text-center bg-slate-900/40 hover:bg-slate-900/60 transition-all">
+                                    <input type="file" onChange={e => {setFile(e.target.files); setAudioData(null);}} className="hidden" id="aud" accept="audio/*" />
+                                    <label htmlFor="aud" className="cursor-pointer group">
+                                        <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📁</div>
+                                        <div className="text-violet-200 font-bold tracking-wide">
+                                            {file? file.name : "Subir archivo de audio"}
+                                        </div>
+                                        <p className="text-xs text-slate-400 mt-2">Formatos compatibles: MP3, WAV, M4A</p>
+                                    </label>
                                 </div>
-                                <div className="w-full bg-slate-900/50 rounded-full h-3 overflow-hidden shadow-inner">
-                                    <div className="progress-bar h-full rounded-full" style={{ width: `${prog}%`, transition: 'width 0.3s' }}></div>
-                                </div>
-                            </div>
-                        )}
 
-                        {!url ? (
-                            <button 
-                                onClick={processAudio} 
-                                disabled={!file || isProc} 
-                                className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed py-5 rounded-2xl font-black text-lg shadow-xl relative z-10"
-                            >
-                                <span className="relative z-10">
-                                    {isProc ? "⚡ CONVIRTIENDO..." : "🚀 PROCESAR AUDIO"}
-                                </span>
-                            </button>
-                        ) : (
-                            <div className="space-y-4">
-                                <div className="bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5">
-                                    <p className="text-xs text-purple-300 mb-3 text-center font-bold flex items-center justify-center gap-2">
-                                        <span>✅</span> Audio procesado exitosamente
-                                    </p>
-                                    <audio 
-                                        ref={audioRef}
-                                        controls 
-                                        className="w-full mb-3" 
-                                        src={url}
-                                        preload="metadata"
-                                    >
-                                        Tu navegador no soporta audio HTML5.
-                                    </audio>
-                                    <p className="text-[10px] text-purple-300/60 text-center break-all px-2">
-                                        📄 <span className="font-bold">{fileName}</span>
-                                    </p>
-                                </div>
-                                
-                                <a 
-                                    href={base64Url}
-                                    download={fileName}
-                                    type="audio/mpeg"
-                                    className="btn-success w-full py-5 rounded-2xl font-black text-lg shadow-xl relative overflow-hidden download-pulse block text-center no-underline"
-                                >
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                        <span className="text-2xl">📥</span>
-                                        DESCARGAR AUDIO
-                                    </span>
-                                </a>
-                                
-                                <div className="instruction-card rounded-2xl p-5">
-                                    <div className="flex items-start gap-3">
-                                        <span className="text-3xl">💡</span>
-                                        <div>
-                                            <p className="text-xs font-black text-green-300 mb-2">
-                                                OPCIONES DE DESCARGA:
-                                            </p>
-                                            <ol className="text-[11px] text-green-200/90 space-y-1.5 leading-relaxed">
-                                                <li><span className="font-bold">Opción 1:</span> Usa el botón verde "DESCARGAR AUDIO" (recomendado)</li>
-                                                <li><span className="font-bold">Opción 2:</span> Mantén presionado el reproductor → "Descargar"</li>
-                                                <li className="text-[10px] text-green-300/70 mt-2">✨ El archivo se guardará con nombre único y extensión .mp3 en Descargas</li>
-                                            </ol>
+                                {isProc && (
+                                    <div className="animate-pulse">
+                                        <div className="flex justify-between text-xs text-violet-300 mb-2 font-bold uppercase tracking-widest">
+                                            <span>Optimizando...</span>
+                                            <span>{prog}%</span>
+                                        </div>
+                                        <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                                            <div className="h-full bg-gradient-to-r from-violet-500 to-pink-500 progress-glow transition-all duration-300" style={{width: `${prog}%`}}></div>
                                         </div>
                                     </div>
-                                </div>
-                                
+                                )}
+
                                 <button 
-                                    onClick={handleReset} 
-                                    className="w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold tracking-widest text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
+                                    onClick={processAudio} 
+                                    disabled={!file |
+
+| isProc} 
+                                    className="w-full py-5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-violet-500/40 disabled:opacity-30 transition-all uppercase tracking-widest"
+                                >
+                                    {isProc? "Trabajando..." : "⚡ Procesar Audio"}
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="text-center py-6">
+                                <div className="text-6xl mb-4">✨</div>
+                                <h2 className="text-xl font-bold text-violet-200 mb-6 uppercase">¡Audio procesado con éxito!</h2>
+                                <button 
+                                    onClick={() => setShowSaveModal(true)} 
+                                    className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold text-lg transition-all mb-4"
+                                >
+                                    ⬇️ Guardar archivo
+                                </button>
+                                <button 
+                                    onClick={() => {setAudioData(null); setFile(null); setProg(0);}} 
+                                    className="text-slate-400 hover:text-white text-sm font-semibold uppercase tracking-widest"
                                 >
                                     🔄 Procesar otro audio
                                 </button>
                             </div>
                         )}
                     </div>
-                    
-                    <div className="mt-10 developer-badge px-8 py-4 rounded-2xl shadow-lg">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-lg">
-                                👨‍💻
-                            </div>
-                            <div>
-                                <p className="text-[9px] text-purple-400/60 uppercase font-bold tracking-widest mb-0.5">
-                                    Desarrollado por
-                                </p>
-                                <p className="text-sm font-black gradient-text tracking-wide">
-                                    YEAN CARLOS GODOY GONZÁLEZ
-                                </p>
+
+                    {/* MODAL GUARDAR COMO */}
+                    {showSaveModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+                            <div className="w-full max-w-sm glass-card p-8 rounded-[2rem] border-violet-500/50 shadow-2xl scale-110 transition-transform">
+                                <h3 className="text-xl font-extrabold mb-6 text-center text-violet-300 uppercase tracking-tight">Guardar Como</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em] ml-2">Nombre del archivo</label>
+                                        <input 
+                                            autoFocus
+                                            type="text" 
+                                            value={fileName} 
+                                            onChange={e => setFileName(e.target.value)}
+                                            className="w-full bg-slate-800 border-2 border-violet-500/20 rounded-xl px-4 py-4 text-white focus:border-violet-500 outline-none transition-all"
+                                            placeholder="Escribe el nombre..."
+                                        />
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button 
+                                            onClick={() => setShowSaveModal(false)}
+                                            className="flex-1 py-4 text-slate-400 font-bold hover:bg-slate-800 rounded-xl transition-all uppercase text-xs tracking-widest"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button 
+                                            onClick={triggerDownload}
+                                            className="flex-1 py-4 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl transition-all uppercase text-xs tracking-widest shadow-lg shadow-violet-500/20"
+                                        >
+                                            Guardar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div className="mt-8 opacity-40 text-center">
-                        <p className="text-[10px] uppercase font-bold tracking-widest text-purple-300/50">
-                            © 2025 Truncar Silencio PRO • Todos los derechos reservados
-                        </p>
-                    </div>
+                    )}
+
+                    <footer className="mt-12 text-center opacity-30 text-[10px] font-bold tracking-[0.3em] uppercase">
+                        © 2025 Yean Carlos Godoy González • v2.0
+                    </footer>
                 </div>
             );
         }
