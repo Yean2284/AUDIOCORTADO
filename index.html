@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Audio Acortador</title>
+    <title>Truncar Silencio PRO</title>
     <meta name="google-adsense-account" content="ca-pub-8057748170377702">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8057748170377702" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,6 +31,11 @@
             transition: all 0.3s ease;
         }
         
+        .card-pro:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 60px -15px rgba(139, 92, 246, 0.4);
+        }
+        
         .gradient-text {
             background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
             -webkit-background-clip: text;
@@ -49,10 +54,21 @@
         
         .file-drop-zone {
             transition: all 0.3s ease;
-            border: 2px dashed rgba(168, 85, 247, 0.3);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            background: rgba(15, 23, 42, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-drop-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .file-drop-zone:hover::before {
+            opacity: 1;
         }
         
         .file-drop-zone:hover {
@@ -63,45 +79,65 @@
         .btn-primary {
             background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
             transition: all 0.3s ease;
-            padding: 1.25rem;
-            border-radius: 1rem;
-            font-weight: 900;
-            font-size: 1.125rem;
-            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 50px rgba(168, 85, 247, 0.5);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5);
         }
         
         .btn-success {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             transition: all 0.3s ease;
-            padding: 1.25rem;
-            border-radius: 1rem;
-            font-weight: 900;
-            font-size: 1.125rem;
-            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
         }
         
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 50px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
         }
         
         .progress-bar {
             background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%);
             background-size: 200% 100%;
             animation: gradient-shift 2s ease infinite;
-            height: 0.75rem;
-            border-radius: 9999px;
         }
         
         @keyframes gradient-shift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+        
+        .developer-badge {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .developer-badge:hover {
+            border-color: rgba(168, 85, 247, 0.6);
+            transform: scale(1.05);
         }
         
         .icon-bounce {
@@ -127,13 +163,33 @@
             height: 45px;
             border-radius: 12px;
         }
+        
+        .instruction-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            animation: pulse-instruction 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-instruction {
+            0%, 100% { border-color: rgba(16, 185, 129, 0.3); }
+            50% { border-color: rgba(16, 185, 129, 0.6); }
+        }
+
+        .download-pulse {
+            animation: download-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes download-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useRef } = React;
+        const { useState, useRef, useEffect } = React;
 
         function App() {
             const [file, setFile] = useState(null);
@@ -142,45 +198,50 @@
             const [url, setUrl] = useState(null);
             const [fileName, setFileName] = useState('');
             const [audioBlob, setAudioBlob] = useState(null);
-            const [canShare, setCanShare] = useState(false);
             const audioCtx = useRef(null);
             const audioRef = useRef(null);
-
-            React.useEffect(() => {
-                if (navigator.share && navigator.canShare) {
-                    setCanShare(true);
-                }
-            }, []);
+            const longPressTimer = useRef(null);
 
             const generateUniqueFileName = (originalName) => {
-                let baseName = originalName.replace(/\.[^/.]+$/, "");
-                baseName = baseName.replace(/_optimizado(_\d+)?(_\d{8}_\d+)?$/g, "");
+                let baseName = originalName.replace(/\.[^/.]+$/, ""); // Quita extensión original
+                baseName = baseName.replace(/_optimizado(_\d+)?(_\d{8}_\d+)?$/g, ""); // Limpia nombres previos
                 baseName = baseName.replace(/[<>:"/\\|?*]/g, '_');
                 const timestamp = Date.now();
                 const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, '');
-                return `${baseName}_optimizado_${dateStr}_${timestamp}.mp3`;
+                return `\( {baseName}_optimizado_ \){dateStr}_${timestamp}.mp3`;
             };
 
-            const shareAudio = async () => {
-                if (!audioBlob || !fileName) return;
+            const downloadAudio = (customFileName = null) => {
+                if (!audioBlob) return;
                 
-                try {
-                    const fileToShare = new File([audioBlob], fileName, { type: 'audio/mpeg' });
-                    
-                    if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
-                        await navigator.share({
-                            files: [fileToShare],
-                            title: 'Audio Optimizado',
-                            text: 'Audio procesado con Audio Acortador'
-                        });
-                    } else {
-                        alert('Tu dispositivo no soporta la función de compartir archivos. Por favor, mantén presionado el reproductor de audio y selecciona "Descargar".');
+                const finalName = customFileName || fileName;
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(audioBlob);
+                link.download = finalName; // ¡Importante: siempre con .mp3!
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                
+                // Intentar descargar
+                link.click();
+                
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+            };
+
+            // Opción 2: Mantener presionado el reproductor
+            const handleLongPressStart = () => {
+                longPressTimer.current = setTimeout(() => {
+                    if (audioBlob && fileName) {
+                        downloadAudio();
+                        alert("Descargando como Opción 2: Mantener presionado");
                     }
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        console.error('Error al compartir:', error);
-                        alert('No se pudo compartir el archivo. Por favor, mantén presionado el reproductor de audio y selecciona "Descargar".');
-                    }
+                }, 800);
+            };
+
+            const handleLongPressEnd = () => {
+                if (longPressTimer.current) {
+                    clearTimeout(longPressTimer.current);
                 }
             };
 
@@ -251,6 +312,7 @@
                     
                     const blob = new Blob(chunks, { type: 'audio/mpeg' });
                     const blobUrl = URL.createObjectURL(blob);
+                    
                     const uniqueFileName = generateUniqueFileName(file.name);
                     
                     setAudioBlob(blob);
@@ -270,9 +332,7 @@
             };
 
             const handleReset = () => {
-                if (url) {
-                    URL.revokeObjectURL(url);
-                }
+                if (url) URL.revokeObjectURL(url);
                 if (audioRef.current) {
                     audioRef.current.pause();
                     audioRef.current.src = '';
@@ -286,7 +346,9 @@
             };
 
             return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6">
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
+                    <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-20 right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl"></div>
                     
                     <div className="w-full max-w-md card-pro p-10 rounded-[3rem] shadow-2xl floating">
                         <div className="flex justify-center mb-6">
@@ -296,22 +358,50 @@
                         </div>
                         
                         <h1 className="text-center text-3xl font-black mb-3 gradient-text tracking-tight">
-                            AUDIO ACORTADOR
+                            TRUNCAR SILENCIO PRO
                         </h1>
                         
-                        <p className="text-center text-xs text-purple-300/70 mb-8 font-semibold">
-                            Archivo seleccionado:
+                        <p className="text-center text-xs text-purple-300/70 mb-2 font-semibold tracking-wide">
+                            Optimiza tus audios eliminando silencios prolongados
                         </p>
                         
-                        <div className="file-drop-zone text-center mb-8">
+                        <div className="bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5 mb-8">
+                            <h2 className="text-xs font-black text-purple-300 mb-3 flex items-center gap-2">
+                                <span>ℹ️</span> CÓMO USAR
+                            </h2>
+                            <ol className="text-xs text-purple-200/80 space-y-2 leading-relaxed">
+                                <li className="flex gap-2">
+                                    <span className="font-bold text-purple-400">1.</span>
+                                    <span>Selecciona tu archivo de audio (MP3, WAV, etc.)</span>
+                                </li>
+                                <li className="flex gap-2">
+                                    <span className="font-bold text-purple-400">2.</span>
+                                    <span>Presiona "PROCESAR AUDIO" y espera</span>
+                                </li>
+                                <li className="flex gap-2">
+                                    <span className="font-bold text-purple-400">3.</span>
+                                    <span>Usa el botón verde "DESCARGAR AUDIO" o mantén presionado el reproductor</span>
+                                </li>
+                            </ol>
+                            <p className="text-[10px] text-purple-300/60 mt-3 italic">
+                                ⚡ Los silencios mayores a 0.6 segundos se reducen automáticamente
+                            </p>
+                        </div>
+                        
+                        <div className="file-drop-zone border-2 border-dashed border-purple-500/30 rounded-3xl p-10 text-center mb-8 bg-slate-900/30">
                             <input type="file" onChange={e => setFile(e.target.files[0])} className="hidden" id="aud" accept="audio/*" />
                             <label htmlFor="aud" className="cursor-pointer block">
                                 <span className={`text-5xl block mb-4 ${!file && 'icon-bounce'}`}>
                                     {file ? "✅" : "📁"}
                                 </span>
                                 <span className="text-sm text-purple-200 font-bold tracking-wide block mb-2">
-                                    {file ? file.name : "Toca para seleccionar audio"}
+                                    {file ? "Archivo seleccionado:" : "Toca para seleccionar audio"}
                                 </span>
+                                {file && (
+                                    <span className="text-xs text-purple-300/80 font-medium block mt-2 px-4 py-2 bg-purple-500/10 rounded-full inline-block">
+                                        {file.name}
+                                    </span>
+                                )}
                             </label>
                         </div>
 
@@ -321,8 +411,8 @@
                                     <span>Procesando...</span>
                                     <span>{prog}%</span>
                                 </div>
-                                <div className="w-full bg-slate-900/50 rounded-full overflow-hidden">
-                                    <div className="progress-bar" style={{ width: `${prog}%`, transition: 'width 0.3s' }}></div>
+                                <div className="w-full bg-slate-900/50 rounded-full h-3 overflow-hidden shadow-inner">
+                                    <div className="progress-bar h-full rounded-full" style={{ width: `${prog}%`, transition: 'width 0.3s' }}></div>
                                 </div>
                             </div>
                         )}
@@ -331,15 +421,17 @@
                             <button 
                                 onClick={processAudio} 
                                 disabled={!file || isProc} 
-                                className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed py-5 rounded-2xl font-black text-lg shadow-xl relative z-10"
                             >
-                                {isProc ? "⚡ CONVIRTIENDO..." : "🚀 PROCESAR AUDIO"}
+                                <span className="relative z-10">
+                                    {isProc ? "⚡ CONVIRTIENDO..." : "🚀 PROCESAR AUDIO"}
+                                </span>
                             </button>
                         ) : (
                             <div className="space-y-4">
                                 <div className="bg-purple-900/20 border border-purple-500/20 rounded-2xl p-5">
-                                    <p className="text-xs text-purple-300 mb-3 text-center font-bold">
-                                        ✅ Audio procesado exitosamente
+                                    <p className="text-xs text-purple-300 mb-3 text-center font-bold flex items-center justify-center gap-2">
+                                        <span>✅</span> Audio procesado exitosamente
                                     </p>
                                     <audio 
                                         ref={audioRef}
@@ -347,35 +439,50 @@
                                         className="w-full mb-3" 
                                         src={url}
                                         preload="metadata"
+                                        onMouseDown={handleLongPressStart}
+                                        onMouseUp={handleLongPressEnd}
+                                        onMouseLeave={handleLongPressEnd}
+                                        onTouchStart={handleLongPressStart}
+                                        onTouchEnd={handleLongPressEnd}
+                                        onTouchCancel={handleLongPressEnd}
+                                        style={{ touchAction: 'manipulation' }}
                                     >
                                         Tu navegador no soporta audio HTML5.
                                     </audio>
                                     <p className="text-[10px] text-purple-300/60 text-center break-all px-2">
-                                        📄 {fileName}
-                                    </p>
-                                </div>
-                                
-                                {canShare && (
-                                    <button 
-                                        onClick={shareAudio}
-                                        className="btn-success w-full"
-                                    >
-                                        📤 GUARDAR AUDIO
-                                    </button>
-                                )}
-                                
-                                <div className="bg-green-900/20 border-2 border-green-500/30 rounded-2xl p-5">
-                                    <p className="text-xs font-bold text-green-300 mb-3 text-center">
-                                        INSTRUCCIONES DE DESCARGA
-                                    </p>
-                                    <p className="text-xs text-green-200/90 leading-relaxed">
-                                        Para descargar el audio optimizado, mantén presionado el reproductor de audio y selecciona la opción "Descargar" o "Guardar audio" del menú que aparecerá. El archivo se guardará en tu carpeta de Descargas con un nombre único.
+                                        📄 <span className="font-bold">{fileName}</span>
                                     </p>
                                 </div>
                                 
                                 <button 
+                                    onClick={() => downloadAudio()}
+                                    className="btn-success w-full py-5 rounded-2xl font-black text-lg shadow-xl relative overflow-hidden download-pulse"
+                                >
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                        <span className="text-2xl">📥</span>
+                                        DESCARGAR AUDIO
+                                    </span>
+                                </button>
+                                
+                                <div className="instruction-card rounded-2xl p-5">
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-3xl">💡</span>
+                                        <div>
+                                            <p className="text-xs font-black text-green-300 mb-2">
+                                                OPCIONES DE DESCARGA:
+                                            </p>
+                                            <ol className="text-[11px] text-green-200/90 space-y-1.5 leading-relaxed">
+                                                <li><span className="font-bold">Opción 1:</span> Usa el botón verde "DESCARGAR AUDIO"</li>
+                                                <li><span className="font-bold">Opción 2:</span> Mantén presionado el reproductor → se descargará automáticamente</li>
+                                                <li className="text-[10px] text-green-300/70 mt-2">✨ El archivo se guardará con nombre único y extensión .mp3 en Descargas</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button 
                                     onClick={handleReset} 
-                                    className="w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
+                                    className="w-full text-xs text-purple-400 hover:text-purple-300 uppercase font-bold tracking-widest text-center py-3 rounded-xl bg-slate-900/30 hover:bg-slate-900/50 transition-all"
                                 >
                                     🔄 Procesar otro audio
                                 </button>
@@ -383,9 +490,25 @@
                         )}
                     </div>
                     
-                    <div className="mt-8 text-center opacity-50">
+                    <div className="mt-10 developer-badge px-8 py-4 rounded-2xl shadow-lg">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-lg">
+                                👨‍💻
+                            </div>
+                            <div>
+                                <p className="text-[9px] text-purple-400/60 uppercase font-bold tracking-widest mb-0.5">
+                                    Desarrollado por
+                                </p>
+                                <p className="text-sm font-black gradient-text tracking-wide">
+                                    YEAN CARLOS GODOY GONZÁLEZ
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-8 opacity-40 text-center">
                         <p className="text-[10px] uppercase font-bold tracking-widest text-purple-300/50">
-                            © 2025 YEAN CARLOS GODOY GONZÁLEZ
+                            © 2025 Truncar Silencio PRO • Todos los derechos reservados
                         </p>
                     </div>
                 </div>
